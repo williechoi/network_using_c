@@ -28,6 +28,9 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    /**
+     * 좀비 프로세스를 막기 위한 코드 구성
+     */ 
     act.sa_handler = read_childproc;
     sigemptyset(&act.sa_mask);
     act.sa_flags=0;
@@ -54,13 +57,25 @@ int main(int argc, char *argv[])
         else
             puts("new client connected.");
 
+        /**
+         * accept 함수 호출 이후 fork를 실행하여 새로운 프로세스 생성
+         * 부모와 자식 프로세스는 모두 소켓의 파일 디스크립터를 갖게 된다.
+         */ 
         pid = fork();
         if(pid == -1){
             close(clnt_sock);
             continue;
         }
 
+        /**
+         * 각각의 프로세스에서 필요 없는 소켓은 닫아준다.
+         */ 
+
         if(pid == 0){
+            /**
+             * 자식 프로세스가 실행하는 영역이다. (클라이언트에게 에코 서비스 제공)
+             * 서버 소켓의 파일 디스크립터는 자식 프로세스가 알 필요가 없으므로 소멸시킨다.
+             */ 
             close(serv_sock);
             while((str_len = read(clnt_sock, buf, BUF_SIZE)) != 0)
                 write(clnt_sock, buf, str_len);
@@ -69,6 +84,10 @@ int main(int argc, char *argv[])
             puts("client disconnected...");
             return 0;
         } else {
+            /**
+             * 새로운 프로세스가 클라이언트에게 서비스를 제공하므로,
+             * 메인 프로세스에서는 클라이언트와 연결된 소켓을 소멸시킨다.
+             */ 
             close(clnt_sock);
         }
     }
