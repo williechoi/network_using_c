@@ -44,8 +44,11 @@ int main(int argc, char* argv[])
 
     fflush(writefp);
 
-    fclose(writefp);
+    fclose(writefp);    // 사실은 fclose가 Half close가 아니고 완전 종료이다.
 
+    /**
+     * 클라이언트가 마지막으로 전송한 문자열이 도착하는지 확인한다.
+     */ 
     fgets(buf, sizeof(buf), readfp);
     fputs(buf, stdout);
     fclose(readfp);
