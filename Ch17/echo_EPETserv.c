@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
             } else {
                 while(1){   // 엣지 트리거 방식에서는 이벤트 발생 시 입력버퍼에 존재하는 데이터를 모두 수신해야 하므로 read를 반복해서 호출
                     str_len = read(ep_events[i].data.fd, buf, BUF_SIZE);
-                    if(str_len==0) {
+                    if(str_len==0) { // close request
                         epoll_ctl(epfd, EPOLL_CTL_DEL, ep_events[i].data.fd, NULL);
                         close(ep_events[i].data.fd);
                         printf("closed client: %d \n", ep_events[i].data.fd);
