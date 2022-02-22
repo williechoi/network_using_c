@@ -50,10 +50,10 @@ int main(int argc, char** argv)
 		clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
 
 		pthread_mutex_lock(&mutx);
-		clnt_socks[clnt_cnt++] = clnt_sock;
+		clnt_socks[clnt_cnt++] = clnt_sock; // 새로운 연결이 형성될 때마다 변수 clnt_cnt와 배열 clnt_socks에 해당 정보를 등록한다.
 		pthread_mutex_unlock(&mutx);
 
-		pthread_create(&t_id, NULL, handle_clnt, (void*)&clnt_sock);
+		pthread_create(&t_id, NULL, handle_clnt, (void*)&clnt_sock);	// 추가된 클라이언트에게 서비스를 제공하기 위한 스레드를 생성한다. (handle_clnt)
 		pthread_detach(t_id);		// 스레드 종료시 스레드 소멸시킴
 		printf("Connected client IP: %s \n", inet_ntoa(clnt_adr.sin_addr));
 	}
@@ -86,6 +86,9 @@ void* handle_clnt(void* arg)
 	return NULL;
 }
 
+/**
+ * 연결된 모든 클라이언트에게 메시지를 전송한다.
+ */ 
 void send_msg(char* msg, int len)
 {
 	int i;
