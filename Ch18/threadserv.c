@@ -96,8 +96,6 @@ void send_msg(char* msg, int len)
 	pthread_mutex_unlock(&mutx);
 }
 
-
-
 void error_handling(char* buf)
 {
     fputs(buf, stderr);
